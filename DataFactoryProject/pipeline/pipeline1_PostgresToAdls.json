@@ -122,7 +122,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "csv_sink",
+						"referenceName": "DS_CSV_ADLS",
 						"type": "DatasetReference"
 					}
 				]
