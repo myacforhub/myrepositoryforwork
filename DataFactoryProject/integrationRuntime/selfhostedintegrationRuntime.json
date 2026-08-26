@@ -1,0 +1,7 @@
+{
+	"name": "selfhostedintegrationRuntime",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "SHIR for copy data from postgre sql to adls"
+	}
+}
