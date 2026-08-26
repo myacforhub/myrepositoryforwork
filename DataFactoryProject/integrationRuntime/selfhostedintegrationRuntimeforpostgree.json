@@ -1,0 +1,7 @@
+{
+	"name": "selfhostedintegrationRuntimeforpostgree",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "copy data from postgree sql to adls"
+	}
+}
