@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "projectadfofmine"
+		},
+		"LS2ADLSDestination_accountKey": {
+			"value": ""
+		},
+		"LinkedServiceForAdls_accountKey": {
+			"value": ""
+		},
+		"PostgreSql_Source_password": {
+			"value": ""
+		},
+		"LS1HttpSource_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com"
+		},
+		"LS2ADLSDestination_properties_typeProperties_url": {
+			"value": "https://myadlsgen2ac.dfs.core.windows.net/"
+		},
+		"LinkedServiceForAdls_properties_typeProperties_url": {
+			"value": "https://myadlsgenac.dfs.core.windows.net/"
+		},
+		"PostgreSql_Source_properties_typeProperties_server": {
+			"value": "localhost"
+		},
+		"PostgreSql_Source_properties_typeProperties_database": {
+			"value": "dvdrental"
+		},
+		"PostgreSql_Source_properties_typeProperties_username": {
+			"value": "postgres"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
