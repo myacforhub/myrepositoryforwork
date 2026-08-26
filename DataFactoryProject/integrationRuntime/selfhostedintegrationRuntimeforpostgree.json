@@ -2,6 +2,9 @@
 	"name": "selfhostedintegrationRuntimeforpostgree",
 	"properties": {
 		"type": "SelfHosted",
-		"description": "copy data from postgree sql to adls"
+		"description": "copy data from postgree sql to adls",
+		"typeProperties": {
+			"selfContainedInteractiveAuthoringEnabled": true
+		}
 	}
 }
