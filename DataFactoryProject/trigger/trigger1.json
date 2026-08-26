@@ -17,6 +17,7 @@
 				"frequency": "Day",
 				"interval": 1,
 				"startTime": "2026-08-26T15:43:00",
+				"endTime": "2026-08-26T15:46:43",
 				"timeZone": "India Standard Time",
 				"schedule": {
 					"minutes": [
