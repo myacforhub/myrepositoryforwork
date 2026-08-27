@@ -7,29 +7,29 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "projectadfofmine"
 		},
-		"PostgreSql_Source_password": {
+		"LS_postgresToAdls_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'PostgreSql_Source'"
+			"metadata": "Secure string for 'password' of 'LS_postgresToAdls'"
 		},
 		"LS2ADLSDestination_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS2ADLSDestination'"
 		},
-		"LinkedServiceForAdls_accountKey": {
+		"LS_ADLsGen2_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'LinkedServiceForAdls'"
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLsGen2'"
 		},
-		"PostgreSql_Source_properties_typeProperties_server": {
+		"LS_postgresToAdls_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "localhost"
 		},
-		"PostgreSql_Source_properties_typeProperties_database": {
+		"LS_postgresToAdls_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "dvdrental"
 		},
-		"PostgreSql_Source_properties_typeProperties_username": {
+		"LS_postgresToAdls_properties_typeProperties_username": {
 			"type": "string",
-			"defaultValue": "postgres"
+			"defaultValue": "postgres "
 		},
 		"LS1HttpSource_properties_typeProperties_url": {
 			"type": "string",
@@ -39,15 +39,44 @@
 			"type": "string",
 			"defaultValue": "https://myadlsgen2ac.dfs.core.windows.net/"
 		},
-		"LinkedServiceForAdls_properties_typeProperties_url": {
+		"LS_ADLsGen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://myadlsgenac.dfs.core.windows.net/"
+			"defaultValue": "https://myadlsgen2ac.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2026-08-26T15:43:00",
+						"endTime": "2026-08-26T15:46:43",
+						"timeZone": "India Standard Time",
+						"schedule": {
+							"minutes": [
+								16
+							],
+							"hours": [
+								9
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/selfhostedintegrationRuntime')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
@@ -67,21 +96,20 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PostgreSql_Source')]",
+			"name": "[concat(parameters('factoryName'), '/LS_postgresToAdls')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Linked Service for Postgree Source",
 				"annotations": [],
 				"type": "PostgreSqlV2",
 				"typeProperties": {
-					"server": "[parameters('PostgreSql_Source_properties_typeProperties_server')]",
+					"server": "[parameters('LS_postgresToAdls_properties_typeProperties_server')]",
 					"port": 5432,
-					"database": "[parameters('PostgreSql_Source_properties_typeProperties_database')]",
-					"username": "[parameters('PostgreSql_Source_properties_typeProperties_username')]",
+					"database": "[parameters('LS_postgresToAdls_properties_typeProperties_database')]",
+					"username": "[parameters('LS_postgresToAdls_properties_typeProperties_username')]",
 					"password": {
 						"type": "SecureString",
-						"value": "[parameters('PostgreSql_Source_password')]"
+						"value": "[parameters('LS_postgresToAdls_password')]"
 					},
 					"sslMode": 2,
 					"authenticationType": "Basic"
@@ -121,12 +149,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Postgres_source')]",
+			"name": "[concat(parameters('factoryName'), '/postgres_source')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "PostgreSql_Source",
+					"referenceName": "LS_postgresToAdls",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -138,7 +166,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_Source')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_postgresToAdls')]"
 			]
 		},
 		{
@@ -188,17 +216,18 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LinkedServiceForAdls')]",
+			"name": "[concat(parameters('factoryName'), '/LS_ADLsGen2')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "postgres into alds",
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('LinkedServiceForAdls_properties_typeProperties_url')]",
+					"url": "[parameters('LS_ADLsGen2_properties_typeProperties_url')]",
 					"accountKey": {
 						"type": "SecureString",
-						"value": "[parameters('LinkedServiceForAdls_accountKey')]"
+						"value": "[parameters('LS_ADLsGen2_accountKey')]"
 					}
 				},
 				"connectVia": {
@@ -239,34 +268,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_CSV_ADLS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS2ADLSDestination",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "employee_csv",
-						"fileSystem": "myprfiles"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS2ADLSDestination')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DS_Source_HTTP')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -294,19 +295,22 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/csv_sink')]",
+			"name": "[concat(parameters('factoryName'), '/ds_alds_sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "LinkedServiceForAdls",
+					"referenceName": "LS_ADLsGen2",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobFSLocation"
+						"type": "AzureBlobFSLocation",
+						"fileName": "emp",
+						"folderPath": "bronze",
+						"fileSystem": "myprfiles"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -316,87 +320,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedServiceForAdls')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_Json_source')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS2ADLSDestination",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "josn_pramater_file.json",
-						"fileSystem": "parameterizedsourcefile"
-					}
-				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"pr_rel_url": {
-							"type": "string"
-						},
-						"pr_folder_sink": {
-							"type": "string"
-						},
-						"pr_file_sink": {
-							"type": "string"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS2ADLSDestination')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_adls_sink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS2ADLSDestination",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"pr_folder_sink": {
-						"type": "String"
-					},
-					"pr_file_sink": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().pr_file_sink",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().pr_folder_sink",
-							"type": "Expression"
-						},
-						"fileSystem": "bronze"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS2ADLSDestination')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLsGen2')]"
 			]
 		},
 		{
@@ -513,155 +437,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dynamicpipelinewithparameterised')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEachForItemIteration",
-						"description": "Iterate items from lookup activity",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LookupToReadParameterItem",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LookupToReadParameterItem').output.value",
-								"type": "Expression"
-							},
-							"isSequential": true,
-							"activities": [
-								{
-									"name": "copydatafromhttptoadls",
-									"description": "Copy data from http api to adls",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "HttpReadSettings",
-												"requestMethod": "GET"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_http_source",
-											"type": "DatasetReference",
-											"parameters": {
-												"pr_rel_url": {
-													"value": "@item().pr_rel_url",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_adls_sink",
-											"type": "DatasetReference",
-											"parameters": {
-												"pr_folder_sink": {
-													"value": "@item().pr_folder_sink",
-													"type": "Expression"
-												},
-												"pr_file_sink": {
-													"value": "@item().pr_file_sink",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					},
-					{
-						"name": "LookupToReadParameterItem",
-						"description": "Lookup activity reads the items inside config json file ",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "ds_Json_source",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-20T14:43:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_Json_source')]",
-				"[concat(variables('factoryId'), '/datasets/ds_http_source')]",
-				"[concat(variables('factoryId'), '/datasets/ds_adls_sink')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pipeline1_PostgresToAdls')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -682,7 +457,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "PostgreSqlV2Source",
-								"queryTimeout": "02:00:00"
+								"query": "SELECT *\nFROM dbo.employees\nWHERE joining_date > '2026-08-25'",
+								"queryTimeout": "01:00:00"
 							},
 							"sink": {
 								"type": "DelimitedTextSink",
@@ -781,14 +557,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Postgres_source",
+								"referenceName": "postgres_source",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_CSV_ADLS",
+								"referenceName": "ds_alds_sink",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -801,47 +577,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Postgres_source')]",
-				"[concat(variables('factoryId'), '/datasets/DS_CSV_ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pipeline1_PostgresToAdls",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2026-08-26T15:43:00",
-						"endTime": "2026-08-26T15:46:43",
-						"timeZone": "India Standard Time",
-						"schedule": {
-							"minutes": [
-								16
-							],
-							"hours": [
-								9
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pipeline1_PostgresToAdls')]"
+				"[concat(variables('factoryId'), '/datasets/postgres_source')]",
+				"[concat(variables('factoryId'), '/datasets/ds_alds_sink')]"
 			]
 		}
 	]

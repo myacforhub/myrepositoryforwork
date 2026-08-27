@@ -11,13 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS2ADLSDestination'"
 		},
-		"LinkedServiceForAdls_accountKey": {
+		"LS_ADLsGen2_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'LinkedServiceForAdls'"
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLsGen2'"
 		},
-		"PostgreSql_Source_password": {
+		"LS_postgresToAdls_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'PostgreSql_Source'"
+			"metadata": "Secure string for 'password' of 'LS_postgresToAdls'"
 		},
 		"LS1HttpSource_properties_typeProperties_url": {
 			"type": "string",
@@ -27,21 +27,21 @@
 			"type": "string",
 			"defaultValue": "https://myadlsgen2ac.dfs.core.windows.net/"
 		},
-		"LinkedServiceForAdls_properties_typeProperties_url": {
+		"LS_ADLsGen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://myadlsgenac.dfs.core.windows.net/"
+			"defaultValue": "https://myadlsgen2ac.dfs.core.windows.net/"
 		},
-		"PostgreSql_Source_properties_typeProperties_server": {
+		"LS_postgresToAdls_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "localhost"
 		},
-		"PostgreSql_Source_properties_typeProperties_database": {
+		"LS_postgresToAdls_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "dvdrental"
 		},
-		"PostgreSql_Source_properties_typeProperties_username": {
+		"LS_postgresToAdls_properties_typeProperties_username": {
 			"type": "string",
-			"defaultValue": "postgres"
+			"defaultValue": "postgres "
 		},
 		"containerUri": {
 			"type": "string",
@@ -70,23 +70,23 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"PostgreSql_Source_password": {
-						"value": "[parameters('PostgreSql_Source_password')]"
+					"LS_postgresToAdls_password": {
+						"value": "[parameters('LS_postgresToAdls_password')]"
 					},
 					"LS2ADLSDestination_accountKey": {
 						"value": "[parameters('LS2ADLSDestination_accountKey')]"
 					},
-					"LinkedServiceForAdls_accountKey": {
-						"value": "[parameters('LinkedServiceForAdls_accountKey')]"
+					"LS_ADLsGen2_accountKey": {
+						"value": "[parameters('LS_ADLsGen2_accountKey')]"
 					},
-					"PostgreSql_Source_properties_typeProperties_server": {
-						"value": "[parameters('PostgreSql_Source_properties_typeProperties_server')]"
+					"LS_postgresToAdls_properties_typeProperties_server": {
+						"value": "[parameters('LS_postgresToAdls_properties_typeProperties_server')]"
 					},
-					"PostgreSql_Source_properties_typeProperties_database": {
-						"value": "[parameters('PostgreSql_Source_properties_typeProperties_database')]"
+					"LS_postgresToAdls_properties_typeProperties_database": {
+						"value": "[parameters('LS_postgresToAdls_properties_typeProperties_database')]"
 					},
-					"PostgreSql_Source_properties_typeProperties_username": {
-						"value": "[parameters('PostgreSql_Source_properties_typeProperties_username')]"
+					"LS_postgresToAdls_properties_typeProperties_username": {
+						"value": "[parameters('LS_postgresToAdls_properties_typeProperties_username')]"
 					},
 					"LS1HttpSource_properties_typeProperties_url": {
 						"value": "[parameters('LS1HttpSource_properties_typeProperties_url')]"
@@ -94,8 +94,8 @@
 					"LS2ADLSDestination_properties_typeProperties_url": {
 						"value": "[parameters('LS2ADLSDestination_properties_typeProperties_url')]"
 					},
-					"LinkedServiceForAdls_properties_typeProperties_url": {
-						"value": "[parameters('LinkedServiceForAdls_properties_typeProperties_url')]"
+					"LS_ADLsGen2_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLsGen2_properties_typeProperties_url')]"
 					}
 				}
 			},

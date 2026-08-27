@@ -8,10 +8,10 @@
 		"LS2ADLSDestination_accountKey": {
 			"value": ""
 		},
-		"LinkedServiceForAdls_accountKey": {
+		"LS_ADLsGen2_accountKey": {
 			"value": ""
 		},
-		"PostgreSql_Source_password": {
+		"LS_postgresToAdls_password": {
 			"value": ""
 		},
 		"LS1HttpSource_properties_typeProperties_url": {
@@ -20,17 +20,17 @@
 		"LS2ADLSDestination_properties_typeProperties_url": {
 			"value": "https://myadlsgen2ac.dfs.core.windows.net/"
 		},
-		"LinkedServiceForAdls_properties_typeProperties_url": {
-			"value": "https://myadlsgenac.dfs.core.windows.net/"
+		"LS_ADLsGen2_properties_typeProperties_url": {
+			"value": "https://myadlsgen2ac.dfs.core.windows.net/"
 		},
-		"PostgreSql_Source_properties_typeProperties_server": {
+		"LS_postgresToAdls_properties_typeProperties_server": {
 			"value": "localhost"
 		},
-		"PostgreSql_Source_properties_typeProperties_database": {
+		"LS_postgresToAdls_properties_typeProperties_database": {
 			"value": "dvdrental"
 		},
-		"PostgreSql_Source_properties_typeProperties_username": {
-			"value": "postgres"
+		"LS_postgresToAdls_properties_typeProperties_username": {
+			"value": "postgres "
 		},
 		"containerUri": {
 			"value": ""
