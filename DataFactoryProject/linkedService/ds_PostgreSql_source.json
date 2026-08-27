@@ -1,0 +1,27 @@
+{
+	"name": "ds_PostgreSql_source",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "linked service for postgres sql ",
+		"parameters": {
+			"p_table_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "PostgreSqlV2",
+		"typeProperties": {
+			"server": "localhost",
+			"port": 5432,
+			"database": "dvdrental",
+			"username": "postgres",
+			"sslMode": 2,
+			"authenticationType": "Basic",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEU2RENCNjEwLTE5QkItNDI4Qy1BNERCLTRBM0UzQTQ1NUMyRl9hMGFjMmExYS1iZmJjLTQzZjktYWZkNC05N2Q1YzBkNjE4OWUiDQp9"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
