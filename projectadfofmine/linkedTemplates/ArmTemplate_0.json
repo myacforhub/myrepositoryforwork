@@ -161,7 +161,7 @@
 				"type": "PostgreSqlV2Table",
 				"schema": [],
 				"typeProperties": {
-					"schema": "dbo",
+					"schema": "public",
 					"table": "employees"
 				}
 			},
@@ -308,8 +308,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "emp",
-						"folderPath": "bronze",
+						"fileName": "employee_csv",
 						"fileSystem": "myprfiles"
 					},
 					"columnDelimiter": ",",
@@ -445,7 +444,14 @@
 					{
 						"name": "postgreeToAdls",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Lookup_Watermark",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -457,7 +463,10 @@
 						"typeProperties": {
 							"source": {
 								"type": "PostgreSqlV2Source",
-								"query": "SELECT *\nFROM dbo.employees\nWHERE joining_date > '2026-08-25'",
+								"query": {
+									"value": "@concat(\n'SELECT * FROM employees WHERE modified_date > ''',\nactivity('Lookup_Watermark').output.firstRow.watermark_value,\n''''\n)",
+									"type": "Expression"
+								},
 								"queryTimeout": "01:00:00"
 							},
 							"sink": {
@@ -569,6 +578,31 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Lookup_Watermark",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "PostgreSqlV2Source",
+								"query": "SELECT watermark_value\nFROM watermark_control\nWHERE table_name = 'employees';",
+								"queryTimeout": "02:00:00"
+							},
+							"dataset": {
+								"referenceName": "postgres_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
 					}
 				],
 				"policy": {
