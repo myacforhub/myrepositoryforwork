@@ -17,7 +17,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "PostgreSqlV2Source",
-						"queryTimeout": "02:00:00"
+						"query": "SELECT *\nFROM dbo.employees\nWHERE joining_date > '2026-08-25'",
+						"queryTimeout": "01:00:00"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -116,13 +117,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Postgres_source",
+						"referenceName": "postgres_source",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_CSV_ADLS",
+						"referenceName": "ds_alds_sink",
 						"type": "DatasetReference"
 					}
 				]

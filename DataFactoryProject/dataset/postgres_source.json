@@ -1,0 +1,16 @@
+{
+	"name": "postgres_source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_postgresToAdls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "PostgreSqlV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "employees"
+		}
+	}
+}
