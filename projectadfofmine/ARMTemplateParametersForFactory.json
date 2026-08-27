@@ -14,6 +14,9 @@
 		"LS_postgresToAdls_password": {
 			"value": ""
 		},
+		"ds_PostgreSql_source_password": {
+			"value": ""
+		},
 		"LS1HttpSource_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com"
 		},
@@ -31,6 +34,15 @@
 		},
 		"LS_postgresToAdls_properties_typeProperties_username": {
 			"value": "postgres "
+		},
+		"ds_PostgreSql_source_properties_typeProperties_server": {
+			"value": "localhost"
+		},
+		"ds_PostgreSql_source_properties_typeProperties_database": {
+			"value": "dvdrental"
+		},
+		"ds_PostgreSql_source_properties_typeProperties_username": {
+			"value": "postgres"
 		}
 	}
 }

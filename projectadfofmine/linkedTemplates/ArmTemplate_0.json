@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_postgresToAdls'"
 		},
+		"ds_PostgreSql_source_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ds_PostgreSql_source'"
+		},
 		"LS2ADLSDestination_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS2ADLSDestination'"
@@ -30,6 +34,18 @@
 		"LS_postgresToAdls_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "postgres "
+		},
+		"ds_PostgreSql_source_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "localhost"
+		},
+		"ds_PostgreSql_source_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dvdrental"
+		},
+		"ds_PostgreSql_source_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "postgres"
 		},
 		"LS1HttpSource_properties_typeProperties_url": {
 			"type": "string",
@@ -124,6 +140,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_PostgreSql_source')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "linked service for postgres sql ",
+				"parameters": {
+					"p_table_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "PostgreSqlV2",
+				"typeProperties": {
+					"server": "[parameters('ds_PostgreSql_source_properties_typeProperties_server')]",
+					"port": 5432,
+					"database": "[parameters('ds_PostgreSql_source_properties_typeProperties_database')]",
+					"username": "[parameters('ds_PostgreSql_source_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ds_PostgreSql_source_password')]"
+					},
+					"sslMode": 2,
+					"authenticationType": "Basic"
+				},
+				"connectVia": {
+					"referenceName": "selfhostedintegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/selfhostedintegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -162,7 +212,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": "public",
-					"table": "employees"
+					"table": "departments"
 				}
 			},
 			"dependsOn": [
@@ -308,7 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "employee_csv",
+						"fileName": "depatments",
 						"fileSystem": "myprfiles"
 					},
 					"columnDelimiter": ",",
@@ -433,6 +483,122 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_Source_HTTP')]",
 				"[concat(variables('factoryId'), '/datasets/DSADLSSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PL_Incremental_Generic",
+						"description": "Parameterised pipeline for multiple tables",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Lookup_Watermark2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "PostgreSqlV2Source",
+								"query": {
+									"value": "@concat(\n'SELECT * FROM ',\npipeline().parameters.p_table_name,\n' WHERE modified_date > ''',\nactivity('Lookup_Watermark2').output.firstRow.watermark_value,\n''''\n)",
+									"type": "Expression"
+								},
+								"queryTimeout": "00:01:00"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "postgres_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_alds_sink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Lookup_Watermark2",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "PostgreSqlV2Source",
+								"query": {
+									"value": "@concat(\n'SELECT watermark_value FROM watermark_control WHERE table_name = ''',\npipeline().parameters.p_table_name,\n''''\n)",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00"
+							},
+							"dataset": {
+								"referenceName": "postgres_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"p_table_name": {
+						"type": "string",
+						"defaultValue": "departments"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/postgres_source')]",
+				"[concat(variables('factoryId'), '/datasets/ds_alds_sink')]"
 			]
 		},
 		{
