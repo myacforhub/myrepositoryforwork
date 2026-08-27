@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "emp",
-				"folderPath": "bronze",
+				"fileName": "employee_csv",
 				"fileSystem": "myprfiles"
 			},
 			"columnDelimiter": ",",

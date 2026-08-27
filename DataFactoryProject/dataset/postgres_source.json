@@ -9,7 +9,7 @@
 		"type": "PostgreSqlV2Table",
 		"schema": [],
 		"typeProperties": {
-			"schema": "dbo",
+			"schema": "public",
 			"table": "employees"
 		}
 	}
